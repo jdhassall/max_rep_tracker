@@ -43,8 +43,8 @@ def new_database_table(connection, cursor, exercise):
         error_logging(error)
 
 def insert_new_data(connection, cursor, exercise):
-    show_exercises(cursor)
     if exercise == '':
+        show_exercises(cursor)
         exercise = input('What exercise would you like to enter data for? ')
     date = input('What is the date the PB was performed on? ')
     weight = input('What was the weight of the PB of the session for this exercise? ')
@@ -76,7 +76,7 @@ def retrieve_data(cursor):
 
 def show_exercises(cursor):
     cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
-    print(f'Please input an exercise to enter new data for from the following\n{cursor.fetchall()}') # THIS IS SOMETIMES BEING CALLED AND THEN MOVING STRAIGHT ONTO THE WEIGHT WHEN ENTERING NEW EXERCISE: NEED TO FIX
+    print(f'########################## EXISTING EXERCISES ##########################\n{cursor.fetchall()}') # THIS IS SOMETIMES BEING CALLED AND THEN MOVING STRAIGHT ONTO THE WEIGHT WHEN ENTERING NEW EXERCISE: NEED TO FIX
 
 def plot_data(weight_data, date_data, exercise):
     try:
@@ -106,7 +106,6 @@ def handle_database_operations(connection, cursor):
             # See if user wants to delete a table
             # See if user wants to delete an entry
 
-
 def handle_data_display_operations(connection, cursor):
     # See if the user wants to display data graphically for a single exercise
     data = retrieve_data(cursor)
@@ -123,11 +122,26 @@ def error_logging(error):
     f.write(string)
     f.close()
 
+def do_you_want_to_quit(continue_programme, connection, cursor):
+    try:
+        answer = input('Do you wish to exit the programme? [yes/no]: ')
+        if answer != 'yes':
+            continue_programme = False
+            cursor.close()
+            connection.close()
+        return continue_programme
+    except answer != 'yes' or 'no':
+        print('Invalid response - please only choose enter yes or no')
+        do_you_want_to_quit(continue_programme)
+
 def main():
-    connection = database_connection()
-    cursor = database_cursor(connection)
-    handle_database_operations(connection, cursor)
-    handle_data_display_operations(connection, cursor)
+    continue_programme = True
+    while continue_programme:
+        connection = database_connection()
+        cursor = database_cursor(connection)
+        handle_database_operations(connection, cursor)
+        handle_data_display_operations(connection, cursor)
+        continue_programme = do_you_want_to_quit(continue_programme, connection, cursor)
 
 if __name__ == '__main__':
     main()
