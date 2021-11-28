@@ -43,8 +43,8 @@ def new_database_table(connection, cursor, exercise):
         error_logging(error)
 
 def insert_new_data(connection, cursor, exercise):
-    show_exercises(cursor)
     if exercise == '':
+        show_exercises(cursor)
         exercise = input('What exercise would you like to enter data for? ')
     date = input('What is the date the PB was performed on? ')
     weight = input('What was the weight of the PB of the session for this exercise? ')
@@ -76,7 +76,7 @@ def retrieve_data(cursor):
 
 def show_exercises(cursor):
     cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
-    print(f'{cursor.fetchall()}') # THIS IS SOMETIMES BEING CALLED AND THEN MOVING STRAIGHT ONTO THE WEIGHT WHEN ENTERING NEW EXERCISE: NEED TO FIX
+    print(f'########################## EXISTING EXERCISES ##########################\n{cursor.fetchall()}') # THIS IS SOMETIMES BEING CALLED AND THEN MOVING STRAIGHT ONTO THE WEIGHT WHEN ENTERING NEW EXERCISE: NEED TO FIX
 
 def plot_data(weight_data, date_data, exercise):
     try:
@@ -124,8 +124,8 @@ def error_logging(error):
 
 def do_you_want_to_quit(continue_programme, connection, cursor):
     try:
-        answer = input('Do you wish to continue or exit the programme? [yes/no]: ')
-        if answer == 'yes':
+        answer = input('Do you wish to exit the programme? [yes/no]: ')
+        if answer != 'yes':
             continue_programme = False
             cursor.close()
             connection.close()
